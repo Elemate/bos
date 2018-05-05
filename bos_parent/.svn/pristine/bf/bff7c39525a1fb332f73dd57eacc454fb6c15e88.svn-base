@@ -1,0 +1,10 @@
+package com.wq.dao.impl;
+
+import com.wq.dao.WorkBillDao;
+import com.wq.dao.base.impl.BaseDaoImpl;
+import com.wq.domain.Workbill;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class WorkBillDaoImpl extends BaseDaoImpl<Workbill> implements WorkBillDao{
+}

@@ -1,0 +1,92 @@
+package com.wq.dao.base.impl;
+
+import com.wq.dao.base.BaseDao;
+import com.wq.utils.PageBean;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T> {
+
+    //代表某个实体类型
+    private Class<T> entity;
+
+    //通过类型注入spring工厂中的会话工厂对象sessionFactory
+    @Resource
+    public void setMySessionFactory(SessionFactory sessionFactory){
+        super.setSessionFactory(sessionFactory);
+    }
+
+    public BaseDaoImpl() {
+        ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
+        Type[] actualTypeArguments =  type.getActualTypeArguments();
+        entity = (Class<T>)actualTypeArguments[0];
+    }
+
+    public void save(T entity) {
+        this.getHibernateTemplate().save(entity);
+    }
+
+    public void delete(T entity) {
+        this.getHibernateTemplate().delete(entity);
+    }
+
+    public void update(T entity) {
+        this.getHibernateTemplate().update(entity);
+    }
+
+    public T findById(Serializable id) {
+        return this.getHibernateTemplate().get(entity, id);
+    }
+
+    public List<T> findAll() {
+        String hql = "from "+entity.getSimpleName();
+        return (List<T>) this.getHibernateTemplate().find(hql);
+    }
+
+    //通用更新方法
+    public void executeUpdate(String queryName, Object... objects) {
+
+        Session session = this.getSessionFactory().getCurrentSession();
+        Query query = session.getNamedQuery(queryName);
+
+        int i = 0;
+        for (Object obj : objects){
+            query.setParameter(i++, obj);
+        }
+        query.executeUpdate();
+    }
+
+    //通用分页查询方法
+    public void pageQuery(PageBean pageBean){
+      /*  List<Long> list = this.getSessionFactory().getCurrentSession().createSQLQuery("select Count(*) from t_user").list();
+        Long count = list.get(0);*/
+        int pageSize = pageBean.getPageSize();
+        int currentPage = pageBean.getCurrentPage();
+        DetachedCriteria detachedCriteria = pageBean.getDetachedCriteria();
+
+        //查找总记录数
+        int total;
+        detachedCriteria.setProjection(Projections.rowCount());     //指定框架发出sql形式为 select count(*) from ---
+        List<Long> list = (List<Long>) this.getHibernateTemplate().findByCriteria(detachedCriteria);
+        total = list.get(0).intValue();
+        pageBean.setTotal(total);
+
+        //查找显示页的数据
+        detachedCriteria.setProjection(null);                       //指定框架发出sql形式为select * from ----
+        int firstResult = (currentPage-1)*pageSize;
+        int maxResult = pageSize;
+        List rows = this.getHibernateTemplate().findByCriteria(detachedCriteria,firstResult,maxResult);
+        pageBean.setRows(rows);
+    }
+
+}

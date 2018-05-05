@@ -1,0 +1,42 @@
+package com.wq.web.action;
+
+import com.wq.domain.Decidedzone;
+import com.wq.service.DecidedzoneService;
+import com.wq.service.SubareaService;
+import com.wq.web.action.base.BaseAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@Scope("prototype")
+public class DecidedzoneAction extends BaseAction<Decidedzone> {
+
+    @Autowired
+    public DecidedzoneService decidedzoneService;
+    @Autowired
+    public SubareaService subareaService;
+
+    public String[] subareaId;
+
+    //分页查询所有定区
+    public String list(){
+        decidedzoneService.pageQuery(pageBean);
+        java2Json(pageBean,new String[]{"subareas","decidedzones","currentPage","pageSize","detachedCriteria"});
+        return NONE;
+    }
+
+    //保存新增定区信息
+    public String save(){
+        decidedzoneService.save(model, subareaId);
+        return LIST;
+    }
+
+    public String[] getSubareaId() {
+        return subareaId;
+    }
+
+    public void setSubareaId(String[] subareaId) {
+        this.subareaId = subareaId;
+    }
+}

@@ -1,0 +1,12 @@
+package com.wq.dao.impl;
+
+import com.wq.dao.StaffDao;
+import com.wq.dao.base.impl.BaseDaoImpl;
+import com.wq.domain.Staff;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class StaffDaoImpl extends BaseDaoImpl<Staff> implements StaffDao {
+
+}

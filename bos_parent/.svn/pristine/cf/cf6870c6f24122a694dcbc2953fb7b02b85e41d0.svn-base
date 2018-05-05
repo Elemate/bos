@@ -1,0 +1,35 @@
+package com.wq.service.impl;
+
+import com.wq.dao.DecidedzoneDao;
+import com.wq.dao.SubareaDao;
+import com.wq.domain.Decidedzone;
+import com.wq.domain.Subarea;
+import com.wq.service.DecidedzoneService;
+import com.wq.utils.PageBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class DecidedzoneServiceImpl implements DecidedzoneService {
+
+    @Autowired
+    public DecidedzoneDao decidedzoneDao;
+    @Autowired
+    public SubareaDao subareaDao;
+
+
+    public void save(Decidedzone model, String[] subareaId) {
+
+        decidedzoneDao.save(model);
+        for (String sbid: subareaId){
+            Subarea subarea = subareaDao.findById(sbid);    //一方（定区）已经放弃维护外键权利，只能由多方（分区）负责维护
+            subarea.setDecidedzone(model);      //分区关联定区
+        }
+    }
+
+    public void pageQuery(PageBean pageBean) {
+        decidedzoneDao.pageQuery(pageBean);
+    }
+}

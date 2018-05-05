@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="false" />
+    <!--
+        <constant name="struts.objectFactory" value="spring"/>
+     -->
+    <package name="basicstruts2" extends="struts-default">
+        <!--配置拦截器-->
+        <interceptors>
+            <interceptor name="loginInterceptor" class="com.wq.web.interceptor.MyInterceptor">
+                <param name="excludeMethods" >login</param>
+            </interceptor>
+
+            <interceptor-stack name="myStack">
+                <interceptor-ref name="loginInterceptor" />
+                <interceptor-ref name="defaultStack" />
+            </interceptor-stack>
+        </interceptors>
+        <!--配置默认拦截器栈-->
+        <default-interceptor-ref name="myStack" />
+        <global-results>
+            <result name="login">/login.jsp</result>
+            <result name="UnauthorizedException">/unauthorized.jsp</result>
+        </global-results>
+        
+        <global-exception-mappings>
+            <exception-mapping exception="org.apache.shiro.authz.UnauthorizedException" result="UnauthorizedException"></exception-mapping>
+        </global-exception-mappings>
+        <!-- 需要进行权限控制的页面访问 -->
+        <action name="page_*_*">
+            <result type="dispatcher">/WEB-INF/pages/{1}/{2}.jsp</result>
+        </action>
+        <action name="userAction_*" method="{1}" class="com.wq.web.action.UserAction">
+            <result name="home">/WEB-INF/pages/common/index.jsp</result>
+            <result name="list">/WEB-INF/pages/admin/userlist.jsp</result>
+        </action>
+        <!--取派员相关Action-->
+        <action name="staffAction_*" method="{1}" class="staffAction">
+            <result name="list">/WEB-INF/pages/base/staff.jsp</result>
+        </action>
+        <!--区域相关Action-->
+        <action name="regionAction_*" method="{1}" class="regionAction">
+            <result name="list">/WEB-INF/pages/base/region.jsp</result>
+        </action>
+        <!--分区相关Action-->
+        <action name="subareaAction_*" method="{1}" class="subareaAction">
+            <result name="list">/WEB-INF/pages/base/subarea.jsp</result>
+        </action>
+        <!--定区相关Action-->
+        <action name="decidedzoneAction_*" method="{1}" class="decidedzoneAction">
+            <result name="list">/WEB-INF/pages/base/decidedzone.jsp</result>
+        </action>
+        <!--业务通知相关Action-->
+        <action name="noticebillAction_*" method="{1}" class="noticebillAction">
+            <result name="noticebill_add">/WEB-INF/pages/qupai/noticebill_add.jsp</result>
+        </action>
+
+        <!--工作单快速录入-->
+        <action name="workordermanagerAction_*" method="{1}" class="workordermanageAction">
+            <result name="list">/WEB-INF/pages/qupai/quickworkorder.jsp</result>
+        </action>
+
+        <!--权限管理-->
+        <action name="functionAction_**" method="{1}" class="functionAction">
+            <result name="list">/WEB-INF/pages/admin/function.jsp</result>
+        </action>
+
+        <!--角色管理-->
+        <action name="roleAction_**" method="{1}" class="roleAction">
+            <result name="list">/WEB-INF/pages/admin/role.jsp</result>
+        </action>
+    </package>
+
+</struts>

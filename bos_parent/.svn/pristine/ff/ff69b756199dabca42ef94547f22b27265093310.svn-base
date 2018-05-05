@@ -1,0 +1,10 @@
+package com.wq.service;
+
+import com.wq.domain.User;
+
+public interface UserService {
+
+    public User login(User user);
+
+    void editPassword(String id, String password);
+}

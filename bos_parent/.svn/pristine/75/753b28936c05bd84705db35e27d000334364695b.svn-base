@@ -1,0 +1,17 @@
+package com.wq.web.action;
+
+import com.wq.service.RegionService;
+import com.wq.domain.Region;
+import com.wq.web.action.base.BaseAction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+@Controller
+@Scope("prototype")
+public class RegionAction extends BaseAction<Region> {
+
+    @Autowired
+    public RegionService regionService;
+
+}

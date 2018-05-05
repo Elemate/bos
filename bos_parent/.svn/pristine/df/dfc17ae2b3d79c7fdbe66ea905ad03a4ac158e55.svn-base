@@ -1,0 +1,10 @@
+package com.wq.service;
+
+import com.wq.domain.Decidedzone;
+import com.wq.utils.PageBean;
+
+public interface DecidedzoneService {
+    void save(Decidedzone model,String[] subareaId);
+
+    void pageQuery(PageBean pageBean);
+}

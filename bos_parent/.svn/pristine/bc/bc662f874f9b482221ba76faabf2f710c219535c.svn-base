@@ -1,0 +1,29 @@
+package com.wq.web.action.base;
+
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+
+import java.lang.reflect.ParameterizedType;
+
+public class BaseAction<T> extends ActionSupport implements ModelDriven<T> {
+
+    public static final String HOME = "home";
+    public static final String LIST = "list";
+
+    public T model;
+    public BaseAction() {
+        ParameterizedType type = (ParameterizedType) this.getClass().getGenericSuperclass();
+        Class clazz = (Class) type.getActualTypeArguments()[0];
+        try {
+            model = (T) clazz.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public T getModel() {
+        return model;
+    }
+}

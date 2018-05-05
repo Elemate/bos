@@ -1,0 +1,7 @@
+package com.wq.dao;
+
+import com.wq.dao.base.BaseDao;
+import com.wq.domain.Workbill;
+
+public interface WorkBillDao extends BaseDao<Workbill> {
+}
